@@ -3,6 +3,7 @@ import pygame.mixer
 import os, subprocess, io
 from gpiozero import Device, Button
 from gpiozero.pins.mock import MockFactory
+import keyboard
 
 def is_raspberrypi():
     try:
@@ -10,6 +11,20 @@ def is_raspberrypi():
             if 'raspberry pi' in m.read().lower(): return True
     except Exception: pass
     return False
+
+def on_p():
+    print('Keyboard: p')
+    button_a.pin.drive_low()
+    button_a.pin.drive_high()
+
+def button_a_press():
+    if pygame.mixer.music.get_busy():
+        print("Pausing")
+        pygame.mixer.music.pause()
+    else:
+        print("Unpausing")
+        pygame.mixer.music.unpause()
+    sleep(0.1)
 
 print("SpecDeck!")
 my_directory = os.path.dirname(os.path.realpath(__file__))
@@ -24,7 +39,11 @@ print("Initialising")
 # Allows development on non-Raspberry Pi platforms
 if is_raspberrypi() is False:
     Device.pin_factory = MockFactory()
+    keyboard.add_hotkey('p', on_p)
+
 button_a = Button(5)
+button_a.when_pressed = button_a_press
+
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1)
 
@@ -37,11 +56,4 @@ pygame.mixer.music.play()
 
 # Main event loop
 while True:
-    if button_a.is_pressed:
-        if pygame.mixer.music.get_busy():
-            print("Pausing")
-            pygame.mixer.music.pause()
-        else:
-            print("Unpausing")
-            pygame.mixer.music.unpause()
     sleep(0.1)
