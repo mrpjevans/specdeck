@@ -13,15 +13,10 @@ def is_raspberrypi():
     except Exception: pass
     return False
 
-def mock_gpio(gpio):
-    gpio.pin.drive_low()
-    gpio.pin.drive_high()
-
 def keyboard_p():
-    mock_gpio(button_a)
-
-def keyboard_r():
-    mock_gpio(button_b)
+    print('Keyboard: p')
+    button_a.pin.drive_low()
+    button_a.pin.drive_high()
 
 def button_a_press():
     if pygame.mixer.music.get_busy():
@@ -30,12 +25,6 @@ def button_a_press():
     else:
         print("Unpausing")
         pygame.mixer.music.unpause()
-    sleep(0.1)
-
-def button_b_press():
-    print("Rewinding and pausing")
-    pygame.mixer.music.play(0, 0)
-    pygame.mixer.music.pause()
     sleep(0.1)
 
 print("SpecDeck!")
@@ -52,12 +41,9 @@ print("Initialising")
 if is_raspberrypi() is False:
     Device.pin_factory = MockFactory()
     keyboard.add_hotkey('p', keyboard_p)
-    keyboard.add_hotkey('r', keyboard_r)
 
 button_a = Button(5)
 button_a.when_pressed = button_a_press
-button_b = Button(6)
-button_b.when_pressed = button_b_press
 
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1)
