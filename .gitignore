@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 *.code-workspace
-tapes/*.tzx
-tapes/*.wav
+tzx/*.tzx
+wav/*.wav
