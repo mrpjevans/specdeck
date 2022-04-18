@@ -10,10 +10,9 @@ print("SpecDeck!")
 my_directory = os.path.dirname(os.path.realpath(__file__))
 config = {
     "tzx_directory": my_directory + "/tzx/",
-    "wav_directory": my_directory + "/wav/",
     "tzxplay_bin": subprocess.run(['which', 'tzxplay'], stdout=subprocess.PIPE).stdout.decode('utf-8').rstrip(),
     "tmp_wav": my_directory + "/tmp.wav",
-    "cache_wavs": True
+    "cache_wavs": False
 }
 selected_tzx = 0
 is_loaded = False
@@ -41,27 +40,18 @@ def keyboard_q():
 def keyboard_w():
     mock_gpio(button_y)
 
-def convert_and_play():
-    global tzx_files, selected_tzx, is_loaded
-    play_wav = config["wav_directory"] + tzx_files[selected_tzx] + ".wav"
-    # Is there a cached WAV? If not, convert.
-    if not os.path.isfile(play_wav):
-        if config["cache_wavs"] is False: play_wav = config["tmp_wav"]
-        print("Converting " + tzx_files[selected_tzx])
-        tzxplay_result = subprocess.run([config["tzxplay_bin"], "-o" , play_wav, config["tzx_directory"] + tzx_files[selected_tzx] + ".tzx" ]).returncode
-        if tzxplay_result != 0:
-            print(config["tzx_directory"] + tzx_files[selected_tzx])
-            print("Conversion failed: " + str(tzxplay_result))
-            return
-    print("Playing " + tzx_files[selected_tzx])
-    pygame.mixer.music.load(play_wav)
-    pygame.mixer.music.play()
-    is_loaded = True
-
 def button_a_press():
     global is_loaded, tzx_files
     if not is_loaded:
-        convert_and_play()
+        print("Converting " + tzx_files[selected_tzx] + " to WAV")
+        tzxplay_result = subprocess.run([config["tzxplay_bin"], "-o" , config["tmp_wav"], config["tzx_directory"] + "Jetpac.tzx" ]).returncode
+        if tzxplay_result is not 0:
+            print("Conversion failed: " + tzxplay_result)
+            return
+        print("Playing " + tzx_files[selected_tzx])
+        pygame.mixer.music.load(config["tmp_wav"])
+        pygame.mixer.music.play()
+        is_loaded = True
     elif pygame.mixer.music.get_busy():
         print("Pausing")
         pygame.mixer.music.pause()
@@ -125,6 +115,14 @@ if len(tzx_files) == 0:
     exit()
 
 print("Selected " + tzx_files[selected_tzx])
+
+
+#print("Converting to WAV")
+#tzxplay_result = subprocess.run([config["tzxplay_bin"], "-o" , config["tmp_wav"], config["tzx_directory"] + "Jetpac.tzx" ]).returncode
+
+#print("Playing WAV")
+#pygame.mixer.music.load(config["tmp_wav"])
+#pygame.mixer.music.play()
 
 # Wait forever
 Event().wait()
