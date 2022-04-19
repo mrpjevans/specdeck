@@ -92,7 +92,7 @@ def change_selection(up):
         selected_tzx = 0 if selected_tzx == len(tzx_files) - 1 else selected_tzx + 1
     print('Selected ' + tzx_files[selected_tzx])
     if is_raspberrypi:
-        display.display(config["img_directory"] + tzx_files[selected_tzx] + ".jpg")
+        display.display(config["img_directory"] + tzx_files[selected_tzx] + ".jpg", tzx_files[selected_tzx])
     pygame.mixer.music.unload()
     is_loaded = False
 
@@ -134,7 +134,7 @@ if len(tzx_files) == 0:
 
 change_selection(False)
 if is_raspberrypi:
-    display.display(config["img_directory"] + tzx_files[selected_tzx] + ".jpg")
+    display.display(config["img_directory"] + tzx_files[selected_tzx] + ".jpg", tzx_files[selected_tzx])
 
 # Wait forever
 Event().wait()

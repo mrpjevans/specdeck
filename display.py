@@ -1,4 +1,7 @@
+import os
 from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 import ST7789 as ST7789
 
 disp = None
@@ -18,17 +21,32 @@ def init():
     )
     disp.begin()
 
-def display(image_file):
+def display(image_file, title):
     global disp
+
+    if not os.path.isfile(image_file):
+        titleImage = Image.new("RGB", (240, 240))
+        draw = ImageDraw.Draw(titleImage)
+        font = ImageFont.truetype(os.path.dirname(os.path.realpath(__file__)) + "/zx_spectrum-7.ttf", 30)
+        draw.text((0,100), title, font=font, fill=(255, 255, 255))
+        disp.display(titleImage)
+        return
 
     image = Image.open(image_file)
 
-    if image.width > 240:
-        ratio = image.height / image.width
-        image = image.resize((240, round(240 / ratio)))
+    if image.width > 240 or image.height > 240:
+        if image.width > image.height:
+            ratio = image.height / image.width
+            newWidth = 240
+            newHeight = round(240 * ratio)
+        else:
+            ratio = image.width / image.height
+            newWidth = round(240 * ratio)
+            newHeight = 240
+        image = image.resize((newWidth, newHeight))
 
     newImage = Image.new(image.mode, (240, 240))
-    left_offset = 120 - round(image.width /2 )
+    left_offset = 120 - round(image.width /2 ) if image.width < 240 else 0
     newImage.paste(image, (left_offset, 0, image.width + left_offset, image.height))
     
     disp.display(newImage)
