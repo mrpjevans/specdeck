@@ -21,11 +21,12 @@ my_directory = os.path.dirname(os.path.realpath(__file__))
 config = {
     "tzx_directory": my_directory + "/tzx/",
     "wav_directory": my_directory + "/wav/",
+    "img_directory": my_directory + "/image/",
     "tzxplay_bin": subprocess.run(['which', 'tzxplay'], stdout=subprocess.PIPE).stdout.decode('utf-8').rstrip(),
     "tmp_wav": my_directory + "/tmp.wav",
     "cache_wavs": True
 }
-selected_tzx = 0
+selected_tzx = -1
 is_loaded = False
 
 def mock_gpio(gpio):
@@ -83,13 +84,15 @@ def button_b_press():
         pygame.mixer.music.pause()
         sleep(0.1)
 
-def change_selection(left):
+def change_selection(up):
     global selected_tzx, is_loaded, tzx_files
-    if left:
+    if up:
         selected_tzx = len(tzx_files) - 1 if selected_tzx == 0 else selected_tzx - 1
     else:
-        selected_tzx =  0 if selected_tzx == len(tzx_files) - 1 else selected_tzx + 1
+        selected_tzx = 0 if selected_tzx == len(tzx_files) - 1 else selected_tzx + 1
     print('Selected ' + tzx_files[selected_tzx])
+    if is_raspberrypi:
+        display.display(config["img_directory"] + tzx_files[selected_tzx] + ".jpg")
     pygame.mixer.music.unload()
     is_loaded = False
 
@@ -129,7 +132,9 @@ if len(tzx_files) == 0:
     print("No tzx files found!")
     exit()
 
-print("Selected " + tzx_files[selected_tzx])
+change_selection(False)
+if is_raspberrypi:
+    display.display(config["img_directory"] + tzx_files[selected_tzx] + ".jpg")
 
 # Wait forever
 Event().wait()

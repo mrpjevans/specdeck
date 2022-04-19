@@ -131,6 +131,7 @@ dmypy.json
 *.code-workspace
 tzx/*.tzx
 wav/*.wav
+image/*.jpg
 
 .DS_Store
 tmp.wav
