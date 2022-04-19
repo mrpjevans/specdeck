@@ -1,10 +1,20 @@
+import os, subprocess, io
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from time import sleep
 from threading import Event
 import pygame.mixer
-import os, subprocess, io
 from gpiozero import Device, Button
 from gpiozero.pins.mock import MockFactory
 import keyboard
+
+try:
+    with io.open("/sys/firmware/devicetree/base/model", "r") as m:
+        is_raspberrypi = True if "raspberry pi" in m.read().lower() else False
+except Exception:
+    is_raspberrypi = False
+
+if is_raspberrypi:
+    import display
 
 print("SpecDeck!")
 my_directory = os.path.dirname(os.path.realpath(__file__))
@@ -17,14 +27,6 @@ config = {
 }
 selected_tzx = 0
 is_loaded = False
-
-def is_raspberrypi():
-    try:
-        with io.open("/sys/firmware/devicetree/base/model", "r") as m:
-            if "raspberry pi" in m.read().lower(): return True
-    except Exception: pass
-    return False
-is_raspberrypi = is_raspberrypi()
 
 def mock_gpio(gpio):
     gpio.pin.drive_low()
@@ -105,6 +107,8 @@ if is_raspberrypi is False:
     keyboard.add_hotkey('r', keyboard_r)
     keyboard.add_hotkey('q', keyboard_q)
     keyboard.add_hotkey('w', keyboard_w)
+else:
+    display.init()
 
 button_a = Button(5)
 button_a.when_pressed = button_a_press
