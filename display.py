@@ -25,11 +25,7 @@ def display(image_file, title):
     global disp
 
     if not os.path.isfile(image_file):
-        titleImage = Image.new("RGB", (240, 240))
-        draw = ImageDraw.Draw(titleImage)
-        font = ImageFont.truetype(os.path.dirname(os.path.realpath(__file__)) + "/zx_spectrum-7.ttf", 30)
-        draw.text((0,100), title, font=font, fill=(255, 255, 255))
-        disp.display(titleImage)
+        display_text(title)
         return
 
     image = Image.open(image_file)
@@ -50,3 +46,12 @@ def display(image_file, title):
     newImage.paste(image, (left_offset, 0, image.width + left_offset, image.height))
     
     disp.display(newImage)
+
+def display_text(text):
+    global disp
+    titleImage = Image.new("RGB", (240, 240))
+    draw = ImageDraw.Draw(titleImage)
+    font = ImageFont.truetype(os.path.dirname(os.path.realpath(__file__)) + "/zx_spectrum-7.ttf", 30)
+    draw.text((0,100), text, font=font, fill=(255, 255, 255))
+    disp.display(titleImage)
+        

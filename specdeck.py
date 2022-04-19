@@ -84,6 +84,12 @@ def button_b_press():
         pygame.mixer.music.pause()
         sleep(0.1)
 
+def button_b_when_held():
+    print("Shutdown")
+    display.display_text("Shutdown")
+    subprocess.run("sudo shutdown -h now", shell=True)
+
+
 def change_selection(up):
     global selected_tzx, is_loaded, tzx_files
     if up:
@@ -115,12 +121,14 @@ else:
 
 button_a = Button(5)
 button_a.when_pressed = button_a_press
-button_b = Button(6)
+button_b = Button(6, hold_time = 5)
 button_b.when_pressed = button_b_press
+button_b.when_held = button_b_when_held
 button_x = Button(16)
 button_x.when_pressed = button_x_press
 button_y = Button(24)
 button_y.when_pressed = button_y_press
+
 
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1)
