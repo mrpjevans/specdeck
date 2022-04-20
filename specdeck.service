@@ -1,0 +1,9 @@
+[Unit]
+Description=specdeck
+
+[Service]
+ExecStart=/usr/bin/python3 /home/pi/specdeck/specdeck.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
