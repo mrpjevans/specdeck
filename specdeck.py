@@ -86,7 +86,7 @@ def button_b_press():
 
 def button_b_when_held():
     print("Shutdown")
-    if is_raspberrypi():
+    if is_raspberrypi:
         display.display_text("Shutdown")
     subprocess.run("sudo shutdown -h now", shell=True)
 
