@@ -26,6 +26,10 @@ config = {
     "tmp_wav": my_directory + "/tmp.wav",
     "cache_wavs": True
 }
+if os.path.isfile(my_directory + "/config.py"):
+    import config as override_config
+    config = config | override_config.config
+
 selected_tzx = -1
 is_loaded = False
 
@@ -46,16 +50,22 @@ def keyboard_w():
     mock_gpio(button_y)
 
 def convert_and_play():
-    global tzx_files, selected_tzx, is_loaded
+    global tzx_files, selected_tzx, is_loaded, config, is_raspberrypi
     play_wav = config["wav_directory"] + tzx_files[selected_tzx] + ".wav"
     # Is there a cached WAV? If not, convert.
     if not os.path.isfile(play_wav):
         if config["cache_wavs"] is False: play_wav = config["tmp_wav"]
         print("Converting " + tzx_files[selected_tzx])
+        if is_raspberrypi:
+            display.display_text("Converting")
         tzxplay_result = subprocess.run([config["tzxplay_bin"], "-o" , play_wav, config["tzx_directory"] + tzx_files[selected_tzx] + ".tzx" ]).returncode
+        if is_raspberrypi:
+            display.display(config["img_directory"] + tzx_files[selected_tzx] + ".jpg", tzx_files[selected_tzx])
         if tzxplay_result != 0:
             print(config["tzx_directory"] + tzx_files[selected_tzx])
             print("Conversion failed: " + str(tzxplay_result))
+            if is_raspberrypi:
+                display.display_text("Failed! :(")
             return
     print("Playing " + tzx_files[selected_tzx])
     pygame.mixer.music.load(play_wav)
@@ -119,6 +129,8 @@ if is_raspberrypi is False:
     keyboard.add_hotkey('w', keyboard_w)
 else:
     display.init()
+    display.display_text("SpecDeck!")
+    sleep(1)
 
 button_a = Button(5)
 button_a.when_pressed = button_a_press

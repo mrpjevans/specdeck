@@ -1,0 +1,11 @@
+# Override the default config here
+# Rename this file to config.py
+# Any values listed here will override defaults
+config = {
+    # "tzx_directory": "Location of TZX files",
+    # "wav_directory": "Cache directory for WAV files",
+    # "img_directory": "Location of image files",
+    # "tzxplay_bin": "Path to tzxplay",
+    #"tmp_wav": "Location for temporary WAV file (if not caching)",
+    #"cache_wavs": True | False - Keep all conversions for faster playback
+}
